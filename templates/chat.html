@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FABLE Intelligence</title>
+
+<style>
+body{
+    margin:0;
+    background:#000;
+    font-family:Arial;
+    color:#fff;
+}
+
+/* HEADER */
+.header{
+    text-align:center;
+    padding:15px;
+    font-size:20px;
+    letter-spacing:2px;
+    color:#4facfe;
+}
+
+/* CHAT AREA */
+.chat-box{
+    height:75vh;
+    overflow-y:auto;
+    padding:10px;
+}
+
+/* MESSAGE */
+.msg{
+    margin:10px;
+    padding:12px;
+    border-radius:10px;
+    max-width:80%;
+    animation:fadeIn 0.3s ease;
+}
+
+.user{
+    background:#222;
+    align-self:flex-end;
+    text-align:right;
+}
+
+.bot{
+    background:#0f2027;
+    border-left:3px solid #4facfe;
+}
+
+/* INPUT AREA */
+.input-box{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    display:flex;
+    background:#111;
+}
+
+input{
+    flex:1;
+    padding:15px;
+    background:#000;
+    border:none;
+    color:#fff;
+}
+
+button{
+    padding:15px;
+    background:#4facfe;
+    border:none;
+    color:#000;
+}
+
+/* TYPING EFFECT */
+.typing{
+    opacity:0.5;
+    font-size:14px;
+}
+
+/* ANIMATION */
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+🧠 FABLE INTELLIGENCE SYSTEM
+</div>
+
+<div class="chat-box" id="chatBox"></div>
+
+<div class="input-box">
+<input id="input" placeholder="Describe your situation...">
+<button onclick="send()">Send</button>
+</div>
+
+<script>
+
+function addMessage(text, cls){
+    let div = document.createElement("div");
+    div.className = "msg " + cls;
+    div.innerText = text;
+    document.getElementById("chatBox").appendChild(div);
+    div.scrollIntoView();
+}
+
+async function send(){
+    let input = document.getElementById("input");
+    let text = input.value.trim();
+    if(!text) return;
+
+    addMessage(text, "user");
+    input.value = "";
+
+    let typing = document.createElement("div");
+    typing.className = "msg bot typing";
+    typing.innerText = "Analyzing...";
+    document.getElementById("chatBox").appendChild(typing);
+
+    let res = await fetch("/api/chat", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({message:text})
+    });
+
+    let data = await res.json();
+    typing.remove();
+
+    addMessage(data.reply, "bot");
+}
+
+</script>
+
+</body>
+</html>

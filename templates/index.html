@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FABLE AI CORE</title>
+
+<style>
+html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+    background:black;
+    overflow:hidden;
+    font-family:monospace;
+}
+
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+}
+
+.container{
+    position:absolute;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:2;
+}
+
+.tagline{
+    margin-bottom:20px;
+    font-size:15px;
+    text-align:center;
+    max-width:80%;
+    line-height:1.5;
+    letter-spacing:1px;
+
+    background:linear-gradient(90deg,#4facfe,#00ffcc,#ff4cf0);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:0 0 8px rgba(79,172,254,0.6);
+}
+
+/* LOGO */
+.core{
+    width:260px;
+    height:260px;
+    border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #6ec3ff, #0f2027);
+    box-shadow:0 0 40px #4facfe, 0 0 120px #4facfe;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* 🔥 ELITE LOGO TEXT */
+.core span{
+    font-size:34px;
+
+    font-weight:600;
+    letter-spacing:3px;
+
+    background:linear-gradient(90deg,#ffffff,#00eaff,#ffffff);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    text-shadow:
+        0 0 10px rgba(0,234,255,0.8),
+        0 0 20px rgba(0,234,255,0.6),
+        0 0 40px rgba(0,234,255,0.4);
+}
+
+.version{
+    margin-top:12px;
+    color:rgba(255,255,255,0.4);
+}
+
+.dev{
+    margin-top:8px;
+    font-size:13px;
+    color:#ffffff;
+    letter-spacing:1px;
+    font-weight:500;
+    text-shadow:0 0 6px rgba(255,255,255,0.4);
+}
+
+.system{
+    position:absolute;
+    bottom:70px;
+    width:100%;
+    text-align:center;
+    font-size:14px;
+}
+
+.footer{
+    position:fixed;
+    bottom:10px;
+    width:100%;
+    text-align:center;
+    font-size:11px;
+    color:rgba(255,255,255,0.25);
+}
+
+.c1{color:#4facfe;}
+.c2{color:#00ffcc;}
+.c3{color:#ff4cf0;}
+.c4{color:#00ff00;}
+.c5{color:#ffaa00;}
+.ready{color:#00ffcc;font-weight:bold;}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="container">
+
+<div class="tagline">
+Crafting powerful ideas from simple stories...
+</div>
+
+<div class="core">
+<span>FABLE Ai</span>
+</div>
+
+<div class="version">EXPERIMENTAL VERSION</div>
+<div class="dev">Developed by : Ajmal Adamz</div>
+
+</div>
+
+<div class="system" id="system"></div>
+
+<div class="footer">
+© Ajmal Adamz Software Company All Rights Reserved
+</div>
+
+<script>
+
+/* canvas */
+let c=document.getElementById("bg");
+let ctx=c.getContext("2d");
+
+function resize(){
+    c.width=window.innerWidth;
+    c.height=window.innerHeight;
+}
+resize();
+window.addEventListener("resize",resize);
+
+let points=[];
+
+for(let i=0;i<120;i++){
+    points.push({
+        x:Math.random()*c.width,
+        y:Math.random()*c.height,
+        dx:(Math.random()-0.5),
+        dy:(Math.random()-0.5)
+    });
+}
+
+function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+
+    points.forEach(p=>{
+        p.x+=p.dx;
+        p.y+=p.dy;
+
+        if(p.x<0||p.x>c.width) p.dx*=-1;
+        if(p.y<0||p.y>c.height) p.dy*=-1;
+
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,2,0,Math.PI*2);
+        ctx.fillStyle="#4facfe";
+        ctx.fill();
+    });
+
+    for(let i=0;i<points.length;i++){
+        for(let j=i+1;j<points.length;j++){
+            let dx=points[i].x-points[j].x;
+            let dy=points[i].y-points[j].y;
+            let dist=Math.sqrt(dx*dx+dy*dy);
+
+            if(dist<120){
+                ctx.strokeStyle="rgba(79,172,254,0.2)";
+                ctx.beginPath();
+                ctx.moveTo(points[i].x,points[i].y);
+                ctx.lineTo(points[j].x,points[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+setInterval(draw,30);
+
+/* animation */
+let lines=[
+'<span class="c1">&gt; Initializing</span>',
+'<span class="c2">&gt; Syncing Memory</span>',
+'<span class="c3">&gt; Connecting Nodes</span>',
+'<span class="c4">&gt; Calibrating Decision</span>',
+'<span class="c5">&gt; Launching FABLE AI</span>'
+];
+
+let system=document.getElementById("system");
+let i=0;
+
+let interval=setInterval(()=>{
+
+    system.innerHTML=lines[i];
+
+    if(i===4){
+        clearInterval(interval);
+
+        setTimeout(()=>{
+            system.innerHTML='<span class="ready">&gt; SYSTEM READY</span>';
+
+            setTimeout(()=>{
+                window.location.href="/main";   // ✅ ONLY CHANGE
+            },2000);
+
+        },1000);
+    }
+
+    i=(i+1)%lines.length;
+
+},1200);
+
+</script>
+
+</body>
+</html>

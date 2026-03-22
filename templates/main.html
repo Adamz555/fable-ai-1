@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FABLE AI LAB</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Audiowide&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Orbitron', monospace;
+}
+
+body{
+    background:black;
+    overflow:hidden;
+}
+
+/* 🔥 SCANLINE EFFECT */
+body::after{
+    content:"";
+    position:fixed;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    background:repeating-linear-gradient(
+        to bottom,
+        rgba(0,255,255,0.03) 0px,
+        rgba(0,255,255,0.03) 1px,
+        transparent 2px,
+        transparent 4px
+    );
+    animation:scanmove 6s linear infinite;
+    z-index:5;
+}
+
+@keyframes scanmove{
+    0%{transform:translateY(0);}
+    100%{transform:translateY(100px);}
+}
+
+video{
+    position:fixed;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:-2;
+}
+
+/* ✅ VIDEO VISIBILITY 70% */
+.overlay{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:radial-gradient(circle, rgba(0,200,255,0.08), rgba(0,0,0,0.6));
+    z-index:-1;
+}
+
+/* 🔥 HEADER BUTTONS */
+.top-btn{
+    position:absolute;
+    top:85px;
+    padding:4px 10px;
+    font-size:9px;
+    border-radius:6px;
+    border:1px solid rgba(255,255,255,0.4);
+    color:#ffffff;
+    background:rgba(255,255,255,0.02);
+    text-shadow:
+        0 0 8px #ffffff,
+        0 0 15px rgba(255,255,255,0.7);
+    backdrop-filter:blur(4px);
+}
+
+.left-btn{ left:12px; }
+.right-btn{ right:12px; }
+
+/* 🔥 HOME BUTTON */
+.back-btn{
+    position:absolute;
+    bottom:40px;
+    right:15px;
+    padding:4px 10px;
+    font-size:9px;
+    border-radius:6px;
+    border:1px solid rgba(255,255,255,0.4);
+    color:#ffffff;
+    background:rgba(255,255,255,0.02);
+    text-shadow:
+        0 0 8px #ffffff,
+        0 0 15px rgba(255,255,255,0.8);
+    display:none;
+}
+
+/* 🔥 BOOT SCREEN */
+.boot-screen{
+    position:absolute;
+    top:40%;
+    width:100%;
+    text-align:center;
+    color:#00ff9f;
+    font-size:13px;
+    font-family:'Courier New', monospace;
+    letter-spacing:2px;
+    text-shadow:
+        0 0 10px #00ff9f,
+        0 0 25px rgba(0,255,170,0.8);
+}
+
+@keyframes flicker{
+    0%{opacity:1;}
+    5%{opacity:0.92;}
+    10%{opacity:1;}
+    15%{opacity:0.95;}
+    20%{opacity:1;}
+    50%{opacity:0.98;}
+    70%{opacity:1;}
+    100%{opacity:1;}
+}
+
+.panel{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:90%;
+    max-width:420px;
+    padding:30px;
+    border-radius:18px;
+
+    background:rgba(0,0,0,0.08);
+    backdrop-filter:blur(14px);
+
+    border:1px solid rgba(0,200,255,0.2);
+
+    box-shadow:
+        0 0 30px rgba(0,200,255,0.1),
+        inset 0 0 15px rgba(0,200,255,0.05);
+
+    text-align:center;
+
+    animation:flicker 3s infinite;
+}
+
+.status{
+    color:#00eaff;
+    margin-bottom:12px;
+    font-size:14px;
+    letter-spacing:2px;
+    text-shadow:0 0 15px #00eaff;
+}
+
+.status,
+.holo-btn,
+.header{
+    animation:glitch 4s infinite;
+}
+
+@keyframes glitch{
+    0%{transform:translate(0);}
+    2%{transform:translate(1px,-1px);}
+    4%{transform:translate(-1px,1px);}
+    6%{transform:translate(0);}
+    100%{transform:translate(0);}
+}
+
+.holo-btn{
+    margin:10px 0;
+    padding:12px;
+    border-radius:12px;
+    font-family:'Rajdhani', sans-serif;
+    font-weight:700;
+    font-size:16px;
+    letter-spacing:3px;
+    color:#00eaff;
+    border:1px solid rgba(0,200,255,0.25);
+    background:rgba(0,200,255,0.02);
+}
+
+.auth-btn{
+    margin:6px 0;
+    padding:8px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.4);
+    color:#ffffff;
+    letter-spacing:2px;
+    cursor:pointer;
+    background:rgba(255,255,255,0.02);
+    font-size:11px;
+    font-family:'Audiowide', cursive;
+}
+
+.switch{
+    position:relative;
+    width:220px;
+    height:56px;
+    margin:25px auto;
+    border-radius:40px;
+    border:1px solid rgba(0,200,255,0.6);
+    cursor:pointer;
+    overflow:hidden;
+}
+
+.switch span{
+    position:absolute;
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding-left:50px;
+    color:#ffffff;
+    letter-spacing:3px;
+    font-size:13px;
+    white-space:nowrap;
+    text-shadow:
+        0 0 10px #00eaff,
+        0 0 30px #00eaff,
+        0 0 60px rgba(0,200,255,0.8);
+}
+
+.core{
+    position:absolute;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    top:7px;
+    left:7px;
+    background:radial-gradient(circle, #00eaff, #003c4f);
+    box-shadow:
+        0 0 30px #00eaff,
+        0 0 80px rgba(0,200,255,0.8);
+    transition:0.4s;
+}
+
+.active .core{
+    left:165px;
+}
+
+.header{
+    position:absolute;
+    top:20px;
+    width:100%;
+    text-align:center;
+    color:#00eaff;
+    letter-spacing:5px;
+    text-shadow:0 0 25px #00eaff;
+}
+
+.author{
+    position:absolute;
+    top:45px;
+    width:100%;
+    text-align:center;
+    font-size:9px;
+    color:#ffffff;
+    letter-spacing:1px;
+    text-shadow:0 0 8px rgba(255,255,255,0.6);
+}
+
+.sub-header{
+    position:absolute;
+    top:65px;
+    width:100%;
+    text-align:center;
+    font-size:11px;
+    color:rgba(255,255,255,0.25);
+    letter-spacing:3px;
+}
+
+.menu{
+    display:none;
+    margin-top:25px;
+}
+
+.footer{
+    position:absolute;
+    bottom:10px;
+    width:100%;
+    text-align:center;
+    font-size:11px;
+    color:rgba(255,255,255,0.3);
+}
+</style>
+</head>
+
+<body>
+
+<video autoplay muted loop playsinline preload="auto">
+<source src="https://res.cloudinary.com/dk7fbcxwy/video/upload/VN20260323_004631_tksivx.mp4">
+</video>
+
+<div class="overlay"></div>
+
+<div class="header">FABLE Ai</div>
+<div class="author">By : Ajmal Adamz</div>
+<div class="sub-header">Experimental Version</div>
+
+<div class="top-btn left-btn">About Developer</div>
+<div class="top-btn right-btn">Contact</div>
+
+<div class="back-btn" id="backBtn" onclick="goHome()">Home</div>
+
+<div id="boot" class="boot-screen"></div>
+
+<div class="panel" id="panel">
+
+<div id="old">
+<div class="status">> Neural System Active</div>
+<div class="status">> AI Core Synced</div>
+
+<div class="switch" onclick="activate(this)">
+<span>ENTER SYSTEM</span>
+<div class="core"></div>
+</div>
+
+<div id="access"></div>
+</div>
+
+<div class="menu" id="menu">
+
+<div class="holo-btn">FABLE RESEARCH LAB</div>
+<div class="holo-btn">AI TODAY</div>
+<div class="holo-btn">FUTURE OF AI</div>
+<div class="holo-btn">MUFAZA SYSTEM</div>
+<div class="holo-btn">INNOVATION CORE</div>
+
+<div class="auth-btn" onclick="togglePopup()">SIGN IN</div>
+<div class="auth-btn" onclick="togglePopup()">SIGN UP</div>
+
+</div>
+
+</div>
+
+<div class="footer">© 2026 Ajmal Adamz Software Company. All rights reserved.</div>
+
+<script>
+function bootSequence(){
+    let boot=document.getElementById("boot");
+
+    let lines=[
+        "> Initializing Neural Kernel...",
+        "> Loading MUFAZA Core...",
+        "> Compiling Cognitive Layers...",
+        "> Injecting Autonomous Logic...",
+        "> Linking Quantum Memory Nodes...",
+        "class MUFAZA {",
+        "  constructor(){ this.state='init'; }",
+        "  evolve(){ return 'AI ACTIVE'; }",
+        "}",
+        "> AI Agent Status: ACTIVE",
+        "> FABLE AI CORE READY"
+    ];
+
+    let i=0;
+
+    function typeLine(){
+        if(i < lines.length){
+            let div=document.createElement("div");
+            div.innerText=lines[i];
+            boot.appendChild(div);
+            i++;
+            setTimeout(typeLine, 250);
+        }else{
+            setTimeout(()=>{
+                boot.style.display="none";
+
+                document.getElementById("panel").style.display="block";
+                document.getElementById("old").style.display="none";
+                document.getElementById("menu").style.display="block";
+
+                document.getElementById("backBtn").style.display="block";
+
+            },800);
+        }
+    }
+
+    typeLine();
+}
+
+function activate(el){
+    el.classList.add("active");
+
+    let access=document.getElementById("access");
+
+    access.innerHTML="> Processing Command";
+
+    setTimeout(()=>{
+        access.innerHTML="> Signing Permission";
+    },1000);
+
+    setTimeout(()=>{
+        access.innerHTML="<span style='color:#ff003c;text-shadow:0 0 20px #ff003c'>> Access Granted</span>";
+    },2000);
+
+    setTimeout(()=>{
+        document.getElementById("panel").style.display="none";
+        bootSequence();
+    },2800);
+}
+
+function goHome(){
+    document.getElementById("backBtn").style.display="none";
+    document.getElementById("panel").style.display="block";
+    document.getElementById("menu").style.display="none";
+    document.getElementById("old").style.display="block";
+    document.getElementById("boot").innerHTML="";
+    document.getElementById("boot").style.display="block";
+    document.getElementById("access").innerHTML="";
+    document.querySelector(".switch").classList.remove("active");
+}
+</script>
+
+</body>
+</html>

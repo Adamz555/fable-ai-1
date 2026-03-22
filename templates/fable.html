@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FABLE AI LAB</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:black;
+    font-family:monospace;
+}
+
+.title{
+    position:absolute;
+    top:10px;
+    width:100%;
+    text-align:center;
+    color:#4facfe;
+}
+</style>
+</head>
+
+<body>
+
+<div class="title">FABLE AI LAB</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/build/three.min.js"></script>
+
+<script>
+
+/* SCENE */
+const scene = new THREE.Scene();
+
+/* CAMERA */
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.set(0,2,6);
+
+/* RENDER */
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+/* LIGHT SETUP (IMPORTANT) */
+const light1 = new THREE.DirectionalLight(0xffffff, 2);
+light1.position.set(5,10,5);
+scene.add(light1);
+
+const light2 = new THREE.PointLight(0x4facfe, 3);
+light2.position.set(0,3,0);
+scene.add(light2);
+
+scene.add(new THREE.AmbientLight(0x222222));
+
+/* FLOOR */
+const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(50,50),
+    new THREE.MeshStandardMaterial({
+        color:0x111111,
+        roughness:0.3,
+        metalness:0.8
+    })
+);
+floor.rotation.x = -Math.PI/2;
+floor.position.y = -1;
+scene.add(floor);
+
+/* CORE (REAL LOOK) */
+const core = new THREE.Mesh(
+    new THREE.SphereGeometry(1,64,64),
+    new THREE.MeshStandardMaterial({
+        color:0x4facfe,
+        emissive:0x4facfe,
+        emissiveIntensity:1.5,
+        metalness:1,
+        roughness:0.1
+    })
+);
+core.position.y = 1;
+scene.add(core);
+
+/* GLOW RING */
+const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(2,0.03,16,100),
+    new THREE.MeshBasicMaterial({
+        color:0x00ffff,
+        transparent:true,
+        opacity:0.6
+    })
+);
+ring.rotation.x = Math.PI/2;
+ring.position.y = 1;
+scene.add(ring);
+
+/* FLOATING PARTICLES */
+let particles=[];
+for(let i=0;i<80;i++){
+    const p = new THREE.Mesh(
+        new THREE.SphereGeometry(0.03,8,8),
+        new THREE.MeshBasicMaterial({color:0x4facfe})
+    );
+    p.position.set(
+        (Math.random()-0.5)*10,
+        Math.random()*4,
+        (Math.random()-0.5)*10
+    );
+    scene.add(p);
+    particles.push(p);
+}
+
+/* ANIMATION */
+function animate(time){
+    requestAnimationFrame(animate);
+
+    core.rotation.y += 0.01;
+    ring.rotation.z += 0.01;
+
+    particles.forEach(p=>{
+        p.position.y += Math.sin(time*0.001+p.position.x)*0.002;
+    });
+
+    camera.position.x = Math.sin(time*0.0005)*4;
+    camera.position.z = Math.cos(time*0.0005)*6;
+    camera.lookAt(0,1,0);
+
+    renderer.render(scene,camera);
+}
+animate();
+
+/* RESIZE */
+window.addEventListener('resize',()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+</script>
+
+</body>
+</html>
